@@ -41,9 +41,10 @@ namespace RobustAccessDbSync
         private static int _syncCycleWaitMinutes = 5;
         private static Stopwatch _cycleTimer = new Stopwatch();
         private static DateTime _nextSyncTime = DateTime.Now;
+        static string clientDbPath;
+        static string serverDbPath;
 
-        [System.Runtime.Versioning.SupportedOSPlatform("windows")]
-        static async Task Main()
+        static void GetServerCredentials()
         {
             Console.Title = "Database Synchronization Tool";
             Console.CursorVisible = false;
@@ -51,20 +52,120 @@ namespace RobustAccessDbSync
             PrintHeader();
             ShowGameStyleLoader("Initializing Database Synchronization Tool", 20);
 
-            SERVER_IP = GetValidInput("Enter SERVER IP: ", "SERVER IP cannot be empty");
-            SHARE_NAME = GetValidInput("Enter SHARE NAME: ", "SHARE NAME cannot be empty");
-            USERNAME = GetValidInput("Enter USERNAME: ", "USERNAME cannot be empty");
-            PASSWORD = GetValidInput("Enter PASSWORD: ", "PASSWORD cannot be empty", true);
+            while (true)
+            {
+                // Username input
+                do
+                {
+                    Console.Write("Enter USERNAME: ");
+                    USERNAME = Console.ReadLine();
+                    if (string.IsNullOrWhiteSpace(USERNAME))
+                        Console.WriteLine("USERNAME cannot be empty.");
+                } while (string.IsNullOrWhiteSpace(USERNAME));
 
-            string clientDbPath = GetValidInput("Enter client database path (e.g., C:\\path\\client.mdb): ",
-                "Client database path cannot be empty");
-           var  file = Path.GetFileName(clientDbPath);
-            clientDbPath = Path.GetDirectoryName(clientDbPath);
-            string serverFileName = GetValidInput("Enter server database filename (e.g., TEST.mdb): ",
-                "Server filename cannot be empty");
+                // Password input
+                do
+                {
+                    Console.Write("Enter PASSWORD: ");
+                    PASSWORD = ReadPassword();
+                    if (string.IsNullOrWhiteSpace(PASSWORD))
+                        Console.WriteLine("PASSWORD cannot be empty.");
+                } while (string.IsNullOrWhiteSpace(PASSWORD));
 
-            string serverDbPath = $@"\\{SERVER_IP}\{SHARE_NAME}\{serverFileName}";
-            PrintSuccess($"Resolved Server DB Path: {serverDbPath}");
+                // Confirmation
+                Console.WriteLine("\nYou entered:");
+                Console.WriteLine($"USERNAME: {USERNAME}");
+                Console.WriteLine($"PASSWORD: {new string('*', PASSWORD.Length)}");
+
+                Console.WriteLine("\nPress Enter to continue or type 'r' to re-enter:");
+
+                string input = Console.ReadLine()?.Trim().ToLower();
+
+                if (string.IsNullOrEmpty(input)) // user just pressed Enter
+                    break;
+                else if (input == "r")
+                    continue;
+                else
+                    Console.WriteLine("Invalid input. Re-entering...\n");
+            }
+        }
+        static void GetClinetServerPath()
+        {
+            while (true)
+            {
+                do
+                {
+                    Console.Write("Enter Server Path: ");
+                    serverDbPath = Console.ReadLine();
+                    if (string.IsNullOrWhiteSpace(serverDbPath))
+                        Console.WriteLine("server path cannot empty");
+                } while (string.IsNullOrWhiteSpace(serverDbPath));
+
+                // Password input
+                do
+                {
+                    Console.Write("Enter  Clinet Path: ");
+                    clientDbPath = Console.ReadLine();
+                    if (string.IsNullOrWhiteSpace(clientDbPath))
+                        Console.WriteLine("client path cannot empty");
+                } while (string.IsNullOrWhiteSpace(clientDbPath));
+
+                var serverParts = serverDbPath.Split(new[] { '\\' }, StringSplitOptions.RemoveEmptyEntries);
+                if (serverParts.Length < 2)
+                {
+                    PrintError("Invalid server path format. Expected format: \\\\server\\share\\path\\file.mdb");
+
+                }
+
+                SERVER_IP = serverParts[0];
+                SHARE_NAME = serverParts[1];
+                // Confirmation
+                Console.WriteLine("\nYou entered:");
+                Console.WriteLine($"Serverpath: {serverDbPath}");
+                Console.WriteLine($"clinetpath: {clientDbPath}");
+
+                Console.WriteLine("\nPress Enter to continue or type 'r' to re-enter:");
+
+                string input = Console.ReadLine()?.Trim().ToLower();
+
+                if (string.IsNullOrEmpty(input)) // user just pressed Enter
+                    break;
+                else if (input == "r")
+                    continue;
+                else
+                    Console.WriteLine("Invalid input. Re-entering...\n");
+            }
+        }
+
+
+        [System.Runtime.Versioning.SupportedOSPlatform("windows")]
+        static async Task Main()
+        {
+
+            GetServerCredentials();
+            GetClinetServerPath();
+
+
+            // Console.Title = "Database Synchronization Tool";
+            // Console.CursorVisible = false;
+
+            // PrintHeader();
+            // ShowGameStyleLoader("Initializing Database Synchronization Tool", 20);
+
+            // SERVER_IP = GetValidInput("Enter SERVER IP: ", "SERVER IP cannot be empty");
+            // SHARE_NAME = GetValidInput("Enter SHARE NAME: ", "SHARE NAME cannot be empty");
+            // USERNAME = GetValidInput("Enter USERNAME: ", "USERNAME cannot be empty");
+            // PASSWORD = GetValidInput("Enter PASSWORD: ", "PASSWORD cannot be empty", true);
+
+            // string clientDbPath = GetValidInput("Enter client database path (e.g., C:\\path\\client.mdb): ",
+            //     "Client database path cannot be empty");
+            //var  file = Path.GetFileName(clientDbPath);
+            // clientDbPath = Path.GetDirectoryName(clientDbPath);
+            // string serverFileName = GetValidInput("Enter server database filename (e.g., TEST.mdb): ",
+            //     "Server filename cannot be empty");
+
+            // string serverDbPath = $@"\\{SERVER_IP}\{SHARE_NAME}\{serverFileName}";
+            // PrintSuccess($"Resolved Server DB Path: {serverDbPath}");
 
             bool isNewClientDb = false;
             if (!HasMdbExtension(clientDbPath))
@@ -77,7 +178,8 @@ namespace RobustAccessDbSync
                     if (!Directory.Exists(destFolder))
                     {
                         PrintError($"ERROR: Destination folder does not exist: {destFolder}");
-                        continue;
+                        GetClinetServerPath();
+                        break;
                     }
                     // server.mdb client.mdb error?
                     clientDbPath = Path.Combine(destFolder, Path.GetFileName(serverDbPath));
@@ -432,7 +534,9 @@ namespace RobustAccessDbSync
                 return false;
 
             string extension = Path.GetExtension(path);
-            return extension.Equals(".mdb", StringComparison.OrdinalIgnoreCase);
+
+            
+            return extension.Equals(".mdb", StringComparison.OrdinalIgnoreCase) || extension.Equals(".crm", StringComparison.OrdinalIgnoreCase);
         }
 
         static async Task<bool> PullDatabaseFromServer(string serverPath, string clientPath)
@@ -832,7 +936,14 @@ namespace RobustAccessDbSync
                 {
                     sourceConn.Open();
 
-                    if (!TableExists(sourceConn, tableName)) return 0;
+                    using (var targetconn = new OleDbConnection(targetConnStr))
+                    {
+                        targetconn.Open();
+                        if (!TableExists(sourceConn, tableName) || !TableExists(targetconn, tableName))
+                        {
+                            CreateTableFromSource(sourceConn, targetconn, tableName);
+                        }
+                    }
 
                     string pkColumn = GetPrimaryKeyColumn(sourceConnStr, tableName);
                     if (string.IsNullOrEmpty(pkColumn)) return 0;
