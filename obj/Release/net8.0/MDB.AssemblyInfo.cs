@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MDB")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+08c0356257839900060f55586a515cd5d3a1f135")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8901d5785d254773bbb0a4a8447cfea58d76fb81")]
 [assembly: System.Reflection.AssemblyProductAttribute("MDB")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MDB")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

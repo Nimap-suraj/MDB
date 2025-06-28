@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "vxT87aaN50I=",
+  "dgSpecHash": "NBcO1cgBOvU=",
   "success": true,
-  "projectFilePath": "C:\\Users\\DELL\\Desktop\\MDB\\MDB.csproj",
+  "projectFilePath": "C:\\Users\\DELL\\Desktop\\nimap\\MDB\\MDB.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\DELL\\.nuget\\packages\\system.configuration.configurationmanager\\8.0.0\\system.configuration.configurationmanager.8.0.0.nupkg.sha512",
     "C:\\Users\\DELL\\.nuget\\packages\\system.data.oledb\\8.0.0\\system.data.oledb.8.0.0.nupkg.sha512",

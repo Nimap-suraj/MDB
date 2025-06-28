@@ -58,7 +58,8 @@ namespace RobustAccessDbSync
 
             string clientDbPath = GetValidInput("Enter client database path (e.g., C:\\path\\client.mdb): ",
                 "Client database path cannot be empty");
-
+           var  file = Path.GetFileName(clientDbPath);
+            clientDbPath = Path.GetDirectoryName(clientDbPath);
             string serverFileName = GetValidInput("Enter server database filename (e.g., TEST.mdb): ",
                 "Server filename cannot be empty");
 
@@ -78,7 +79,7 @@ namespace RobustAccessDbSync
                         PrintError($"ERROR: Destination folder does not exist: {destFolder}");
                         continue;
                     }
-
+                    // server.mdb client.mdb error?
                     clientDbPath = Path.Combine(destFolder, Path.GetFileName(serverDbPath));
 
                     RunCommand($"net use {DRIVE_LETTER} /delete", false);

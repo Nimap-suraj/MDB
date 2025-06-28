@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\DELL\\Desktop\\MDB\\MDB.csproj": {}
+    "C:\\Users\\DELL\\Desktop\\nimap\\MDB\\MDB.csproj": {}
   },
   "projects": {
-    "C:\\Users\\DELL\\Desktop\\MDB\\MDB.csproj": {
+    "C:\\Users\\DELL\\Desktop\\nimap\\MDB\\MDB.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\DELL\\Desktop\\MDB\\MDB.csproj",
+        "projectUniqueName": "C:\\Users\\DELL\\Desktop\\nimap\\MDB\\MDB.csproj",
         "projectName": "MDB",
-        "projectPath": "C:\\Users\\DELL\\Desktop\\MDB\\MDB.csproj",
+        "projectPath": "C:\\Users\\DELL\\Desktop\\nimap\\MDB\\MDB.csproj",
         "packagesPath": "C:\\Users\\DELL\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\DELL\\Desktop\\MDB\\obj\\",
+        "outputPath": "C:\\Users\\DELL\\Desktop\\nimap\\MDB\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
