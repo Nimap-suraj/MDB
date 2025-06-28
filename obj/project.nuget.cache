@@ -1,14 +1,14 @@
 {
   "version": 2,
-  "dgSpecHash": "AFricKyAsVE=",
+  "dgSpecHash": "NBcO1cgBOvU=",
   "success": true,
-  "projectFilePath": "C:\\Users\\Nimap\\source\\repos\\Syncronization_Project_Handle\\MDB\\MDB.csproj",
+  "projectFilePath": "C:\\Users\\DELL\\Desktop\\nimap\\MDB\\MDB.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\Nimap\\.nuget\\packages\\system.configuration.configurationmanager\\9.0.6\\system.configuration.configurationmanager.9.0.6.nupkg.sha512",
-    "C:\\Users\\Nimap\\.nuget\\packages\\system.data.oledb\\9.0.6\\system.data.oledb.9.0.6.nupkg.sha512",
-    "C:\\Users\\Nimap\\.nuget\\packages\\system.diagnostics.eventlog\\9.0.6\\system.diagnostics.eventlog.9.0.6.nupkg.sha512",
-    "C:\\Users\\Nimap\\.nuget\\packages\\system.diagnostics.performancecounter\\9.0.6\\system.diagnostics.performancecounter.9.0.6.nupkg.sha512",
-    "C:\\Users\\Nimap\\.nuget\\packages\\system.security.cryptography.protecteddata\\9.0.6\\system.security.cryptography.protecteddata.9.0.6.nupkg.sha512"
+    "C:\\Users\\DELL\\.nuget\\packages\\system.configuration.configurationmanager\\8.0.0\\system.configuration.configurationmanager.8.0.0.nupkg.sha512",
+    "C:\\Users\\DELL\\.nuget\\packages\\system.data.oledb\\8.0.0\\system.data.oledb.8.0.0.nupkg.sha512",
+    "C:\\Users\\DELL\\.nuget\\packages\\system.diagnostics.eventlog\\8.0.0\\system.diagnostics.eventlog.8.0.0.nupkg.sha512",
+    "C:\\Users\\DELL\\.nuget\\packages\\system.diagnostics.performancecounter\\8.0.0\\system.diagnostics.performancecounter.8.0.0.nupkg.sha512",
+    "C:\\Users\\DELL\\.nuget\\packages\\system.security.cryptography.protecteddata\\8.0.0\\system.security.cryptography.protecteddata.8.0.0.nupkg.sha512"
   ],
   "logs": []
 }
