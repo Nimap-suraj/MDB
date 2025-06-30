@@ -7,6 +7,10 @@
       "RelativeMoniker": "D:0:0:{9C11B44D-0E1B-4567-BEB6-AAD1AC771F55}|MDB.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{9C11B44D-0E1B-4567-BEB6-AAD1AC771F55}|MDB.csproj|c:\\users\\nimap\\desktop\\oledbsync\\mdb\\user_data.txt||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{9C11B44D-0E1B-4567-BEB6-AAD1AC771F55}|MDB.csproj|solutionrelative:user_data.txt||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{9C11B44D-0E1B-4567-BEB6-AAD1AC771F55}|MDB.csproj|c:\\users\\nimap\\desktop\\oledbsync\\mdb\\mdb.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
       "RelativeMoniker": "D:0:0:{9C11B44D-0E1B-4567-BEB6-AAD1AC771F55}|MDB.csproj|solutionrelative:mdb.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
     },
@@ -22,7 +26,7 @@
       "DocumentGroups": [
         {
           "DockedHeight": 50,
-          "SelectedChildIndex": 5,
+          "SelectedChildIndex": 6,
           "Children": [
             {
               "$type": "Bookmark",
@@ -38,7 +42,20 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 1,
+              "Title": "user_data.txt",
+              "DocumentMoniker": "C:\\Users\\Nimap\\Desktop\\OledbSync\\MDB\\user_data.txt",
+              "RelativeDocumentMoniker": "user_data.txt",
+              "ToolTip": "C:\\Users\\Nimap\\Desktop\\OledbSync\\MDB\\user_data.txt",
+              "RelativeToolTip": "user_data.txt",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003109|",
+              "WhenOpened": "2025-06-30T07:15:43.756Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
               "Title": ".gitignore",
               "DocumentMoniker": "C:\\Users\\Nimap\\Desktop\\OledbSync\\MDB\\.gitignore",
               "RelativeDocumentMoniker": ".gitignore",
@@ -46,21 +63,19 @@
               "RelativeToolTip": ".gitignore",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "00000000-0000-0000-0000-000000000000.000000|iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAF8SURBVDhPjVNLTgJBEG1lwpoFB3GNK9fieA48hD8iwT/ihwgSDAIHgAGXXsEV18CNzL/LquqZdsYM6kteXqcy3fWqpmpNRBgOhyABBEgpAFVKPIMUcYzUyOU\u002BXM/b2qtU3vkSfRjjZTCAMAw1A2LwzdFoBPP5HNqdzuL27n4juibWI\u002BUshBA1DIkhEx9iEorFotgslQqGYbxxAGFEqt1MxmPWJLbLZdZ\u002Bv89q5PMFPiTR6z2zdaxR0fXA0XTBcVywkb4fwHXjRteecIDNQ7UmExVYAdPcxYaqclN46na5WenMKjtlVnTYwcXlVYaDqImW9beD5N/TeGy32QHXm6hZ03ZgiSQHp2fnWQ4oBmJqWSqwAqZpZjt4aLXAD4J0VqyZsmoubfB8H2r1eoaD6NXZ9HcHO\u002BSA3f4AjifXl8rItOETM8ckB9WTWpYD9RdeZ1PWVWAHWXPQaDb59f/w8LiqHeh1pvGkCaP6qB8yXusoxmuNZ7XmII4O9vGuEF86osuDYRkpYQAAAABJRU5ErkJggg==",
-              "WhenOpened": "2025-06-28T12:13:35.469Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-06-28T12:13:35.469Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "MDB",
+              "DocumentIndex": 2,
+              "Title": "MDB.csproj",
               "DocumentMoniker": "C:\\Users\\Nimap\\Desktop\\OledbSync\\MDB\\MDB.csproj",
               "RelativeDocumentMoniker": "MDB.csproj",
               "ToolTip": "C:\\Users\\Nimap\\Desktop\\OledbSync\\MDB\\MDB.csproj",
               "RelativeToolTip": "MDB.csproj",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2025-06-28T12:11:22.48Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-06-28T12:11:22.48Z"
             },
             {
               "$type": "Document",
@@ -70,7 +85,7 @@
               "RelativeDocumentMoniker": "Program.cs",
               "ToolTip": "C:\\Users\\Nimap\\Desktop\\OledbSync\\MDB\\Program.cs",
               "RelativeToolTip": "Program.cs",
-              "ViewState": "AgIAAJcBAAAA0MzMzMzwvxICAAAbAAAAAAAAAA==",
+              "ViewState": "AgIAAGEDAAAAyczMzMwYwHQDAAApAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-06-28T05:55:52.348Z",
               "EditorCaption": ""

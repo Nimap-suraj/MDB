@@ -24,7 +24,7 @@ namespace RobustAccessDbSync
         public Dictionary<string, object> RowData { get; set; }
         public bool IsDelete { get; set; }
         public DateTime ChangeTime { get; set; }
-    }
+    }   
 
     class Program
     {
@@ -43,6 +43,8 @@ namespace RobustAccessDbSync
         private static DateTime _nextSyncTime = DateTime.Now;
         static string clientDbPath;
         static string serverDbPath;
+        static string filePath = "user_data.txt"; // File to save the input
+
 
         static void GetServerCredentials()
         {
@@ -73,16 +75,20 @@ namespace RobustAccessDbSync
                 } while (string.IsNullOrWhiteSpace(PASSWORD));
 
                 // Confirmation
-                Console.WriteLine("\nYou entered:");
-                Console.WriteLine($"USERNAME: {USERNAME}");
-                Console.WriteLine($"PASSWORD: {new string('*', PASSWORD.Length)}");
+                //Console.WriteLine("\nYou entered:");
+                //Console.WriteLine($"USERNAME: {USERNAME}");
+                //Console.WriteLine($"PASSWORD: {new string('*', PASSWORD.Length)}");
 
                 Console.WriteLine("\nPress Enter to continue or type 'r' to re-enter:");
 
                 string input = Console.ReadLine()?.Trim().ToLower();
 
-                if (string.IsNullOrEmpty(input)) // user just pressed Enter
+                if (string.IsNullOrEmpty(input))
+                {  // user just pressed Enter
+                    File.WriteAllText(filePath, USERNAME);
+                    File.WriteAllText(filePath, PASSWORD);
                     break;
+                }
                 else if (input == "r")
                     continue;
                 else
@@ -120,16 +126,21 @@ namespace RobustAccessDbSync
                 SERVER_IP = serverParts[0];
                 SHARE_NAME = serverParts[1];
                 // Confirmation
-                Console.WriteLine("\nYou entered:");
-                Console.WriteLine($"Serverpath: {serverDbPath}");
-                Console.WriteLine($"clinetpath: {clientDbPath}");
+                //Console.WriteLine("\nYou entered:");
+                //Console.WriteLine($"Serverpath: {serverDbPath}");
+                //Console.WriteLine($"clinetpath: {clientDbPath}");
 
                 Console.WriteLine("\nPress Enter to continue or type 'r' to re-enter:");
 
                 string input = Console.ReadLine()?.Trim().ToLower();
 
-                if (string.IsNullOrEmpty(input)) // user just pressed Enter
+                if (string.IsNullOrEmpty(input))
+                {  // user just pressed Enter
+                    File.WriteAllText(filePath, SERVER_IP);
+                    File.WriteAllText(filePath, SHARE_NAME);
+                    File.WriteAllText(filePath,clientDbPath);
                     break;
+                }
                 else if (input == "r")
                     continue;
                 else
@@ -142,55 +153,83 @@ namespace RobustAccessDbSync
         static async Task Main()
         {
 
-            GetServerCredentials();
-            GetClinetServerPath();
+            // Check if credentials file exists
+            if (File.Exists(filePath))
+            {
+                string[] savedData = File.ReadAllLines(filePath);
 
+                if (savedData.Length >= 5) // Ensure we have all required data
+                {
+                    Console.WriteLine("Saved credentials found:");
+                    Console.WriteLine($"Username: {savedData[0]}");
+                    Console.WriteLine($"Server Path: {savedData[4]}");
+                    Console.WriteLine($"Client Path: {savedData[5]}");
 
-            // Console.Title = "Database Synchronization Tool";
-            // Console.CursorVisible = false;
+                    Console.Write("\nUse saved credentials? (Y/N): ");
+                    var key = Console.ReadKey();
 
-            // PrintHeader();
-            // ShowGameStyleLoader("Initializing Database Synchronization Tool", 20);
+                    if (key.Key == ConsoleKey.Y)
+                    {
+                        // Use saved credentials
+                        USERNAME = savedData[0];
+                        PASSWORD = savedData[1];
+                        SERVER_IP = savedData[2];
+                        SHARE_NAME = savedData[3];
+                        serverDbPath = savedData[4];
+                        clientDbPath = savedData[5];
 
-            // SERVER_IP = GetValidInput("Enter SERVER IP: ", "SERVER IP cannot be empty");
-            // SHARE_NAME = GetValidInput("Enter SHARE NAME: ", "SHARE NAME cannot be empty");
-            // USERNAME = GetValidInput("Enter USERNAME: ", "USERNAME cannot be empty");
-            // PASSWORD = GetValidInput("Enter PASSWORD: ", "PASSWORD cannot be empty", true);
+                        Console.WriteLine("\nUsing saved credentials...");
+                    }
+                    else
+                    {
+                        // Get new credentials
+                        GetServerCredentials();
+                        GetClinetServerPath();
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Saved credentials are incomplete.");
+                    GetServerCredentials();
+                    GetClinetServerPath();
+                }
+            }
+            else
+            {
+                // First run - get new credentials
+                GetServerCredentials();
+                GetClinetServerPath();
+            }
 
-            // string clientDbPath = GetValidInput("Enter client database path (e.g., C:\\path\\client.mdb): ",
-            //     "Client database path cannot be empty");
-            //var  file = Path.GetFileName(clientDbPath);
-            // clientDbPath = Path.GetDirectoryName(clientDbPath);
-            // string serverFileName = GetValidInput("Enter server database filename (e.g., TEST.mdb): ",
-            //     "Server filename cannot be empty");
-
-            // string serverDbPath = $@"\\{SERVER_IP}\{SHARE_NAME}\{serverFileName}";
-            // PrintSuccess($"Resolved Server DB Path: {serverDbPath}");
-
+        
             bool isNewClientDb = false;
             if (!HasMdbExtension(clientDbPath))
             {
                 while (true)
                 {
-                    //string destFolder = GetValidInput("Enter destination folder (e.g., C:\\DemoFiles): ",
-                    //    "Destination folder cannot be empty");
-                    string destFolder = clientDbPath;
-                    if (!Directory.Exists(destFolder))
-                    {
-                        PrintError($"ERROR: Destination folder does not exist: {destFolder}");
-                        GetClinetServerPath();
-                        break;
-                    }
-                    // server.mdb client.mdb error?
-                    clientDbPath = Path.Combine(destFolder, Path.GetFileName(serverDbPath));
+                    //string destFolder = clientDbPath; // Initialize with current clientDbPath
 
+                    // If directory doesn't exist, get new input and restart the check immediately
+                    if (!Directory.Exists(clientDbPath))
+                    {
+                        PrintError($"ERROR: Destination folder does not exist: {clientDbPath}");
+                        Console.Write("Enter a valid destination folder: ");
+                        clientDbPath = Console.ReadLine();
+                        continue; // Restart loop to check the new input
+                    }
+
+                    // Proceed with network operations if directory exists
+                    clientDbPath = Path.Combine(clientDbPath, Path.GetFileName(serverDbPath));
                     RunCommand($"net use {DRIVE_LETTER} /delete", false);
 
-                    PrintInfo("Mounting shared folder...");
+                   // PrintInfo("Mounting shared folder...");
                     var connectCmd = $"net use {DRIVE_LETTER} \\\\{SERVER_IP}\\{SHARE_NAME} /user:{USERNAME} {PASSWORD} /persistent:no";
+
                     if (!RunCommand(connectCmd))
                     {
                         PrintError("ERROR: Failed to connect to shared folder.");
+                        GetServerCredentials();
+                        GetClinetServerPath();
                         continue;
                     }
 
@@ -200,6 +239,8 @@ namespace RobustAccessDbSync
                     {
                         PrintError($"ERROR: File does not exist on server: {Path.GetFileName(serverDbPath)}");
                         RunCommand($"net use {DRIVE_LETTER} /delete", false);
+                        Console.Write("Enter a valid server DB path: ");
+                        serverDbPath = Console.ReadLine();
                         continue;
                     }
 
@@ -207,9 +248,9 @@ namespace RobustAccessDbSync
                     try
                     {
                         File.Copy(serverFilePath, clientDbPath, true);
-                        PrintSuccess($"File successfully copied to: {clientDbPath}");
+                         PrintSuccess($"File successfully copied to: {clientDbPath}");
                         isNewClientDb = true;
-                        break;
+                        break; // Exit loop on success
                     }
                     catch (Exception ex)
                     {
@@ -219,7 +260,6 @@ namespace RobustAccessDbSync
                     RunCommand($"net use {DRIVE_LETTER} /delete", false);
                 }
             }
-
             string syncMetaFile = "sync_metadata.json";
             SyncMetadata metadata = null;
 
@@ -262,10 +302,22 @@ namespace RobustAccessDbSync
 
 
 
-            ShowGameStyleLoader("Loading synchronization metadata", 10);
-            Console.WriteLine();
+            //ShowGameStyleLoader("Loading synchronization metadata", 10);
+            //Console.WriteLine();
+            //var clientTables = GetAllTableNames(clientConnStr);
+            //var serverTables = GetAllTableNames(serverConnStr);
+            //var allTables = clientTables.Union(serverTables).ToList();
 
-            metadata = LoadSyncMetadata(syncMetaFile) ?? new SyncMetadata();
+            //// Bi-directional table structure sync
+            //foreach (var table in allTables)
+            //{
+            //    // Client → Server
+            //    SyncTableStructure(clientConnStr, serverConnStr, table);
+            //    // Server → Client
+            //    SyncTableStructure(serverConnStr, clientConnStr, table);
+            //}
+
+                metadata = LoadSyncMetadata(syncMetaFile) ?? new SyncMetadata();
             InitializeMetadata(metadata, clientConnStr, serverConnStr, isNewClientDb);
 
             PrintSuccess("\nStarting optimized synchronization...");
@@ -289,22 +341,6 @@ namespace RobustAccessDbSync
             Console.ReadKey();
         }
 
-        static string GetValidInput(string prompt, string errorMessage, bool isPassword = false)
-        {
-            string input;
-            do
-            {
-                Console.Write(prompt);
-                input = isPassword ? ReadPassword() : Console.ReadLine();
-
-                if (string.IsNullOrWhiteSpace(input))
-                {
-                    PrintError(errorMessage);
-                }
-            } while (string.IsNullOrWhiteSpace(input));
-
-            return input;
-        }
 
         static string ReadPassword()
         {
@@ -388,15 +424,7 @@ namespace RobustAccessDbSync
                 ExecuteNonQuery(targetConn, createTableSql.ToString());
                 Console.WriteLine($"Created table {tableName} in target database");
 
-                // Create corresponding tombstone table
-                string tombstoneTable = $"{tableName}_Deleted";
-                string createTombstone = $@"
-      CREATE TABLE [{tombstoneTable}] (
-          PK TEXT(255),
-          DeletedAt DATETIME,
-          Origin TEXT(10)
-      )";
-                ExecuteNonQuery(targetConn, createTombstone);
+        
             }
             catch (Exception ex)
             {
@@ -448,6 +476,7 @@ namespace RobustAccessDbSync
             Console.ResetColor();
         }
 
+
         static void InitializeMetadata(SyncMetadata metadata, string clientConnStr, string serverConnStr, bool isNewClientDb)
         {
             var allTables = GetAllTableNames(clientConnStr)
@@ -459,50 +488,55 @@ namespace RobustAccessDbSync
             {
                 if (!metadata.TableLastSync.ContainsKey(table))
                 {
-                    if (isNewClientDb)
+                    try
                     {
                         using var conn = new OleDbConnection(clientConnStr);
                         conn.Open();
+                        // First check if Serverzeit column exists
+                        bool hasServerzeit = ColumnExists(conn, table, "Serverzeit");
+                        if (!hasServerzeit)
+                        {
+                            metadata.TableLastSync[table] = DateTime.UtcNow;
+                            continue;
+                        }
                         using var cmd = new OleDbCommand($"SELECT MAX(Serverzeit) FROM [{table}]", conn);
                         var result = cmd.ExecuteScalar();
 
                         if (result != DBNull.Value && result != null)
                         {
                             metadata.TableLastSync[table] = (DateTime)result;
-                            PrintInfo($"Initialized table '{table}' with max Serverzeit: {(DateTime)result:yyyy-MM-dd HH:mm:ss}");
+                          //  PrintInfo($"Initialized table '{table}' with max Serverzeit: {(DateTime)result:yyyy-MM-dd HH:mm:ss}");
                         }
-                    }
-
-                    else
-                    {
-                        try
-                        {
-                            using var conn = new OleDbConnection(clientConnStr);
-                            conn.Open();
-                            using var cmd = new OleDbCommand($"SELECT MAX(Serverzeit) FROM [{table}]", conn);
-                            var result = cmd.ExecuteScalar();
-
-                            if (result != DBNull.Value && result != null)
-                            {
-                                metadata.TableLastSync[table] = (DateTime)result;
-                                PrintInfo($"Initialized table '{table}' with max Serverzeit: {(DateTime)result:yyyy-MM-dd HH:mm:ss}");
-                            }
-                            else
-                            {
-                                metadata.TableLastSync[table] = DateTime.MinValue;
-                                //PrintInfo($"Initialized table '{table}' with MinValue (no records)");
-                            }
-                        }
-                        catch
+                        else
                         {
                             metadata.TableLastSync[table] = DateTime.MinValue;
-                            //PrintInfo($"These Table is missing.");
                         }
+                    }
+                    catch (Exception ex)
+                    {
+                        metadata.TableLastSync[table] = DateTime.MinValue;
+                        //PrintWarning($"Could not initialize metadata for table '{table}': {ex.Message}");
                     }
                 }
             }
         }
 
+        // Helper method to check if column exists
+        static bool ColumnExists(OleDbConnection conn, string tableName, string columnName)
+        {
+            try
+            {
+                DataTable columns = conn.GetOleDbSchemaTable(OleDbSchemaGuid.Columns,
+                    new object[] { null, null, tableName, null });
+
+                return columns.Rows.Cast<DataRow>()
+                    .Any(row => row["COLUMN_NAME"].ToString().Equals(columnName, StringComparison.OrdinalIgnoreCase));
+            }
+            catch
+            {
+                return false;
+            }
+        }
         static bool RunCommand(string command, bool showOutput = true)
         {
             try
@@ -647,15 +681,11 @@ namespace RobustAccessDbSync
             string syncMetaFile,
             SyncMetadata metadata)
         {
-            //var clientTables = GetAllTableNames(clientConnStr);
-            //var serverTables = GetAllTableNames(serverConnStr);
-            //var allTables = clientTables.Union(serverTables, StringComparer.OrdinalIgnoreCase).ToList();
-
+           
             while (_syncRunning)
             {
                 try
                 {
-
                     var clientTables = GetAllTableNames(clientConnStr);
                     var serverTables = GetAllTableNames(serverConnStr);
                     var allTables = clientTables.Union(serverTables).ToList();
@@ -693,6 +723,7 @@ namespace RobustAccessDbSync
                             {
                                 try
                                 {
+                                    
                                     DateTime lastSync = metadata.TableLastSync.ContainsKey(tableName)
                                         ? metadata.TableLastSync[tableName]
                                         : DateTime.MinValue;
@@ -994,7 +1025,7 @@ namespace RobustAccessDbSync
             }
             catch (Exception ex)
             {
-                PrintError($"Error syncing {tableName}: {ex.Message}");
+                //PrintError($"Error syncing {tableName}: {ex.Message}");
             }
 
             if (changesApplied > 0 && maxTimestamp > lastSync)
@@ -1102,43 +1133,7 @@ namespace RobustAccessDbSync
                 Console.WriteLine($"Error creating table {tableName}: {ex.Message}");
             }
         }
-        //old
-        //static void CreateTableFromSource(OleDbConnection targetConn, Dictionary<string, object> sampleRow, string tableName)
-        //{
-        //    try
-        //    {
-        //        var createTableSql = new StringBuilder($"CREATE TABLE [{tableName}] (");
-        //        DataTable columns = targetConn.GetOleDbSchemaTable(OleDbSchemaGuid.Columns,
-        //           new object[] { null, null, tableName, null });
-
-        //        DataTable primaryKeys = targetConn.GetOleDbSchemaTable(OleDbSchemaGuid.Primary_Keys,
-        //            new object[] { null, null, tableName });
-
-        //        foreach (DataRow column in columns.Rows)
-        //        {
-        //            string columnName = column["COLUMN_NAME"].ToString();
-        //            string dataType = GetSqlDataType(column);
-        //            bool isPrimaryKey = primaryKeys.Select($"COLUMN_NAME = '{columnName}'").Length > 0;
-
-        //            createTableSql.Append($"[{columnName}] {dataType}");
-
-        //            if (isPrimaryKey)
-        //                createTableSql.Append(" PRIMARY KEY");
-
-        //            createTableSql.Append(", ");
-        //        }
-
-        //        createTableSql.Append("[Serverzeit] DATETIME DEFAULT Now())");
-
-        //        using var cmd = new OleDbCommand(createTableSql.ToString(), targetConn);
-        //        cmd.ExecuteNonQuery();
-        //        PrintSuccess($"Created table {tableName}");
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        PrintError($"Error creating table {tableName}: {ex.Message}");
-        //    }
-        //}
+   
         static string GetSqlDataType(DataRow column)
 
         {
